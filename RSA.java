@@ -62,13 +62,13 @@ public class RSA {
         /* Step 2: Calculate n = p.q */
         n = p.multiply(q);
         /* Step 3: Calculate ø(n) = (p - 1).(q - 1) */
-        PhiN = p.subtract(BigInteger.valueOf(1));
-        PhiN = PhiN.multiply(q.subtract(BigInteger.valueOf(1)));
+        PhiN = p.subtract(BigInteger.ONE);
+        PhiN = PhiN.multiply(q.subtract(BigInteger.ONE));
         /* Step 4: Find e such that gcd(e, ø(n)) = 1 ; 1 < e < ø(n) */
         do {
             e = new BigInteger(2 * SIZE, new Random());
         } while ((e.compareTo(PhiN) != 1)
-                || (bigGCD(e,PhiN).compareTo(BigInteger.valueOf(1)) != 0));
+                || (bigGCD(e,PhiN).compareTo(BigInteger.ONE) != 0));
         /* Step 5: Calculate d such that e.d = 1 (mod ø(n)) */
         d = bigModInverse(e, PhiN);
     }
