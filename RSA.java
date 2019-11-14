@@ -52,6 +52,32 @@ public class RSA {
         return res; 
     } 
 
+    static public BigInteger bPhi(BigInteger p, BigInteger q)
+    {
+        return BigInteger.ZERO;
+    }
+
+    static public BigInteger bPubKey(BigInteger e, BigInteger p, BigInteger q)
+    {
+        return BigInteger.ZERO;
+    }
+
+    static public void bKeyPair(BigInteger e, BigInteger d, BigInteger p, BigInteger q)
+    {
+        return;
+    }
+
+    static public BigInteger str2BigInteger(String plainText)
+    {
+        return BigInteger.ZERO;
+    }
+    
+    static public String bigInteger2Str(BigInteger cyperText)
+    {
+        return "";
+    }
+
+    // TODO: reconstruct follow above function 
     public void initialize() {
         int SIZE = 512;
         /* Step 1: Select two large prime numbers. Say p and q. */
