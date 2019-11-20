@@ -69,12 +69,22 @@ public class RSA {
 
     static public BigInteger str2BigInteger(String plainText)
     {
-        return BigInteger.ZERO;
+        byte [] byteTmp = plainText.getBytes();
+        BigInteger bPlainText = BigInteger.ZERO;
+        try {
+            bPlainText = new BigInteger(byteTmp);
+            
+        } catch(NumberFormatException ex) {
+            System.err.println("Plain text must not be empty");
+        }
+        return bPlainText;
     }
     
     static public String bigInteger2Str(BigInteger cyperText)
     {
-        return "";
+        byte [] plainBytes = cyperText.toByteArray();
+        String plainText  = new String(plainBytes);
+        return plainText;
     }
 
     // TODO: reconstruct follow above function 
