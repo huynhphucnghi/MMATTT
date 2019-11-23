@@ -80,9 +80,9 @@ public class RSA {
         return bPlainText;
     }
     
-    static public String bigInteger2Str(BigInteger cyperText)
+    static public String bigInteger2Str(BigInteger cipherText)
     {
-        byte [] plainBytes = cyperText.toByteArray();
+        byte [] plainBytes = cipherText.toByteArray();
         String plainText  = new String(plainBytes);
         return plainText;
     }
