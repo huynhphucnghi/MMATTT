@@ -43,20 +43,9 @@ public class AKS
     private int SIEVE_ERATOS_SIZE = 100000000;
 
     /* aks constructor */
-    public AKS(BigInteger input)
+    public AKS()
     {
         sieveEratos();
-
-        boolean result = checkIsPrime(input);
-
-        if( result) 
-        {
-            System.out.println("Is Prime");
-        }
-        else 
-        {
-            System.out.println("Is not Prime");
-        }
     }
     
     /* function to check if a given number is prime or not */
@@ -288,12 +277,16 @@ public class AKS
 	
 	public static void main(String[] args) 
     { 
-		int SIZE = 256;
+		int SIZE = 64;
 		BigInteger p = new BigInteger(SIZE, 15, new Random());
         System.out.println(p); 
         // Execute time
         long startTime = System.currentTimeMillis();
-        AKS app = new AKS(p);
+        AKS app = new AKS();
+        if (app.checkIsPrime(p))
+            System.out.println("Is Prime");
+        else
+            System.out.println("Is not Prime");
         long stopTime = System.currentTimeMillis();
         long elapsedTime = stopTime - startTime;
         System.out.println("Total execute time: " + elapsedTime + " ms");

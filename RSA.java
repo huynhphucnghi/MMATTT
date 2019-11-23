@@ -122,10 +122,19 @@ public class RSA {
 
     // TODO: reconstruct follow above function 
     public void initialize() {
-        int SIZE = 512;
+        int SIZE = 64;
+        AKS tb = new AKS();
+        
         /* Step 1: Select two large prime numbers. Say p and q. */
-        p = new BigInteger(SIZE, 15, new Random());
-        q = new BigInteger(SIZE, 15, new Random());
+        boolean p_check, q_check;
+        do{
+            p = new BigInteger(SIZE, new Random());
+        }
+        while(!(tb.checkIsPrime(p)));
+        do{
+            q = new BigInteger(SIZE, new Random());
+        }
+        while(!(tb.checkIsPrime(q)));
         System.out.println(p);
         System.out.println(q);
         /* Step 2: Calculate n = p.q */
