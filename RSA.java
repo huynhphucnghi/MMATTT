@@ -13,11 +13,23 @@ public class RSA {
         initialize();
     }
 
+    /**
+     * Calculate the greatest common divisor from 2 number a & b
+     * @param a A non negative number
+     * @param b A non negative number
+     * @return greatest common divisor of a & b
+     */
     static private BigInteger bigGCD(BigInteger a, BigInteger b) {
         if (b.equals(BigInteger.ZERO)) return a;
         return bigGCD(b, a.mod(b));
     }
 
+    /**
+     *
+     * @param a
+     * @param m
+     * @return
+     */
     static private BigInteger bigModInverse(BigInteger a, BigInteger m) 
     { 
         // extend Euclid
@@ -37,8 +49,15 @@ public class RSA {
         if (x.compareTo(BigInteger.ZERO) == -1)
             x = x.add(m0);
         return x;
-    } 
+    }
 
+    /**
+     * Power and modulo
+     * @param x The base number
+     * @param y The exponent
+     * @param p The divisor
+     * @return (x^y) mod p
+     */
     static private BigInteger bigModPow(BigInteger x, BigInteger y, BigInteger p) 
     { 
         BigInteger res = BigInteger.ONE;
