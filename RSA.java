@@ -54,8 +54,8 @@ public class RSA {
 
     /**
      * Calculate ø(p*q)
-     * @param p A prime number
-     * @param q A prime number
+     * @param p The first prime number
+     * @param q The second prime number
      * @return number of positive integers less than p*q that are relatively prime to p*q
      */
     static public BigInteger bPhi(BigInteger p, BigInteger q)
@@ -64,9 +64,16 @@ public class RSA {
         return PhiN.multiply(q.subtract(BigInteger.ONE));;
     }
 
-    static public BigInteger bPubKey(BigInteger e, BigInteger p, BigInteger q)
+    /**
+     * Calculate private key from p,q and e
+     * @param e Public key
+     * @param p The first prime number
+     * @param q The second prime number
+     * @return Private key
+     */
+    static public BigInteger bPrivateKey(BigInteger e, BigInteger p, BigInteger q)
     {
-        return BigInteger.ZERO;
+        return bigModInverse(e, RSA.bPhi(p, q));
     }
 
     static public void bKeyPair(BigInteger e, BigInteger d, BigInteger p, BigInteger q)
@@ -112,7 +119,7 @@ public class RSA {
         } while ((e.compareTo(PhiN) != 1)
                 || (bigGCD(e,PhiN).compareTo(BigInteger.ONE) != 0));
         /* Step 5: Calculate d such that e.d = 1 (mod ø(n)) */
-        d = bigModInverse(e, PhiN);
+        d = RSA.bPrivateKey(e, p, q);
     }
 
     public BigInteger encrypt(BigInteger plaintext) {
