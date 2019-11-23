@@ -50,11 +50,18 @@ public class RSA {
             x = x.multiply(x).mod(p);
         }
         return res; 
-    } 
+    }
 
+    /**
+     * Calculate ø(p*q)
+     * @param p A prime number
+     * @param q A prime number
+     * @return number of positive integers less than p*q that are relatively prime to p*q
+     */
     static public BigInteger bPhi(BigInteger p, BigInteger q)
     {
-        return BigInteger.ZERO;
+        PhiN = p.subtract(BigInteger.ONE);
+        return PhiN.multiply(q.subtract(BigInteger.ONE));;
     }
 
     static public BigInteger bPubKey(BigInteger e, BigInteger p, BigInteger q)
