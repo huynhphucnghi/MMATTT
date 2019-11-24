@@ -79,8 +79,8 @@ public class RSA {
      */
     static public BigInteger bPhi(BigInteger p, BigInteger q)
     {
-        PhiN = p.subtract(BigInteger.ONE);
-        return PhiN.multiply(q.subtract(BigInteger.ONE));;
+        BigInteger PhiN = p.subtract(BigInteger.ONE);
+        return PhiN.multiply(q.subtract(BigInteger.ONE));
     }
 
     /**
