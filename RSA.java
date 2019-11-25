@@ -120,21 +120,41 @@ public class RSA {
         return plainText;
     }
 
+    static public BigInteger genPrime(AKS tb, int size)
+    {
+        BigInteger six = new BigInteger("6");
+        BigInteger p = new BigInteger(size, new Random()).setBit(size-1);
+        BigInteger m = p.divide(six);
+        p = m.multiply(six).subtract(BigInteger.ONE);
+        while (true)
+        {
+            if (tb.checkIsPrime(p)){
+                break;
+            }
+
+            p = p.add(new BigInteger("2"));
+            if (tb.checkIsPrime(p))
+                break;
+
+            p = p.add(new BigInteger("4"));
+            if (p.bitLength() != size)
+                p = new BigInteger(size, new Random()).setBit(size-1);
+        }
+        return p;
+    }
+
     // TODO: reconstruct follow above function 
     public void initialize() {
         int SIZE = 64;
         AKS tb = new AKS();
         
         /* Step 1: Select two large prime numbers. Say p and q. */
-        boolean p_check, q_check;
-        do{
-            p = new BigInteger(SIZE, new Random());
-        }
-        while(!(tb.checkIsPrime(p)));
-        do{
-            q = new BigInteger(SIZE, new Random());
-        }
-        while(!(tb.checkIsPrime(q)));
+        long startTime = System.currentTimeMillis();
+        p = genPrime(tb, SIZE);
+        q = genPrime(tb, SIZE);
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println("Total prime generator time: " + elapsedTime + " ms");
         System.out.println(p);
         System.out.println(q);
         /* Step 2: Calculate n = p.q */
