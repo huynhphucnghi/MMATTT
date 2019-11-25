@@ -95,9 +95,20 @@ public class RSA {
         return bigModInverse(e, RSA.bPhi(p, q));
     }
 
-    static public void bKeyPair(BigInteger e, BigInteger d, BigInteger p, BigInteger q)
+    /**
+     * Generate key pair from p & q
+     * @param p The first prime number
+     * @param q The second prime number
+     */
+    static public void genKeyPair(BigInteger p, BigInteger q)
     {
-        return;
+        n = p.multiply(q);
+        PhiN = RSA.bPhi(p, q);
+        do {
+            e = new BigInteger(2 * SIZE, new Random());
+        } while ((e.compareTo(PhiN) != 1)
+                || (bigGCD(e,PhiN).compareTo(BigInteger.ONE) != 0));
+        d = RSA.bPrivateKey(e, p, q);
     }
 
     static public BigInteger str2BigInteger(String plainText)
@@ -157,17 +168,7 @@ public class RSA {
         System.out.println("Total prime generator time: " + elapsedTime + " ms");
         System.out.println(p);
         System.out.println(q);
-        /* Step 2: Calculate n = p.q */
-        n = p.multiply(q);
-        /* Step 3: Calculate ø(n) = (p - 1).(q - 1) */
-        PhiN = RSA.bPhi(p, q);
-        /* Step 4: Find e such that gcd(e, ø(n)) = 1 ; 1 < e < ø(n) */
-        do {
-            e = new BigInteger(2 * SIZE, new Random());
-        } while ((e.compareTo(PhiN) != 1)
-                || (bigGCD(e,PhiN).compareTo(BigInteger.ONE) != 0));
-        /* Step 5: Calculate d such that e.d = 1 (mod ø(n)) */
-        d = RSA.bPrivateKey(e, p, q);
+        RSA.genKeyPair(p, q);
     }
 
     public BigInteger encrypt(BigInteger plaintext) {
