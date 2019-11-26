@@ -1,24 +1,29 @@
 import java.math.BigInteger;
 
 public class Utils {
-    static public BigInteger str2BigInteger(String plainText)
+    /**
+     * Convert String to BigInteger
+     */
+    static public BigInteger str2BigInteger(String text)
     {
-        byte [] byteTmp = plainText.getBytes();
-        BigInteger bPlainText = BigInteger.ZERO;
+        byte [] byteTmp = text.getBytes();
+        BigInteger res = BigInteger.ZERO;
         try {
-            bPlainText = new BigInteger(byteTmp);
-
+            res = new BigInteger(byteTmp);
         } catch(NumberFormatException ex) {
             System.err.println("Plain text must not be empty");
         }
-        return bPlainText;
+        return res;
     }
 
-    static public String bigInteger2Str(BigInteger cipherText)
+    /**
+     * Convert BigInteger to String
+     */
+    static public String bigInteger2Str(BigInteger n)
     {
-        byte [] plainBytes = cipherText.toByteArray();
-        String plainText  = new String(plainBytes);
-        return plainText;
+        byte [] plainBytes = n.toByteArray();
+        String res  = new String(plainBytes);
+        return res;
     }
 
     /**
