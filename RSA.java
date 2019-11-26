@@ -8,6 +8,7 @@ public class RSA {
     private BigInteger n;
     private BigInteger PhiN;
     private BigInteger e, d;
+    private int SIZE;
 
     public RSA() {
         initialize();
@@ -95,22 +96,6 @@ public class RSA {
         return bigModInverse(e, RSA.bPhi(p, q));
     }
 
-    /**
-     * Generate key pair from p & q
-     * @param p The first prime number
-     * @param q The second prime number
-     */
-    static public void genKeyPair(BigInteger p, BigInteger q)
-    {
-        n = p.multiply(q);
-        PhiN = RSA.bPhi(p, q);
-        do {
-            e = new BigInteger(2 * SIZE, new Random());
-        } while ((e.compareTo(PhiN) != 1)
-                || (bigGCD(e,PhiN).compareTo(BigInteger.ONE) != 0));
-        d = RSA.bPrivateKey(e, p, q);
-    }
-
     static public BigInteger str2BigInteger(String plainText)
     {
         byte [] byteTmp = plainText.getBytes();
@@ -154,9 +139,26 @@ public class RSA {
         return p;
     }
 
+
+    /**
+     * Generate key pair from p & q
+     * @param p The first prime number
+     * @param q The second prime number
+     */
+    public void genKeyPair(BigInteger p, BigInteger q)
+    {
+        n = p.multiply(q);
+        PhiN = RSA.bPhi(p, q);
+        do {
+            e = new BigInteger(2 * SIZE, new Random());
+        } while ((e.compareTo(PhiN) != 1)
+                || (bigGCD(e,PhiN).compareTo(BigInteger.ONE) != 0));
+        d = RSA.bPrivateKey(e, p, q);
+    }
+
     // TODO: reconstruct follow above function 
     public void initialize() {
-        int SIZE = 64;
+        SIZE = 64;
         AKS tb = new AKS();
         
         /* Step 1: Select two large prime numbers. Say p and q. */
@@ -168,7 +170,7 @@ public class RSA {
         System.out.println("Total prime generator time: " + elapsedTime + " ms");
         System.out.println(p);
         System.out.println(q);
-        RSA.genKeyPair(p, q);
+        this.genKeyPair(p, q);
     }
 
     public BigInteger encrypt(BigInteger plaintext) {
