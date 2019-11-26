@@ -53,26 +53,6 @@ public class RSA {
     }
 
     /**
-     * Power and modulo
-     * @param x The base number
-     * @param y The exponent
-     * @param p The divisor
-     * @return (x^y) mod p
-     */
-    static private BigInteger bigModPow(BigInteger x, BigInteger y, BigInteger p) 
-    { 
-        BigInteger res = BigInteger.ONE;
-        x = x.mod(p);
-        while (y.compareTo(BigInteger.ZERO) == 1){
-            if(y.and(BigInteger.ONE).equals(BigInteger.ONE))
-                res = res.multiply(x).mod(p);
-            y = y.shiftRight(1);
-            x = x.multiply(x).mod(p);
-        }
-        return res; 
-    }
-
-    /**
      * Calculate ø(p*q)
      * @param p The first prime number
      * @param q The second prime number
@@ -94,26 +74,6 @@ public class RSA {
     static public BigInteger bPrivateKey(BigInteger e, BigInteger p, BigInteger q)
     {
         return bigModInverse(e, RSA.bPhi(p, q));
-    }
-
-    static public BigInteger str2BigInteger(String plainText)
-    {
-        byte [] byteTmp = plainText.getBytes();
-        BigInteger bPlainText = BigInteger.ZERO;
-        try {
-            bPlainText = new BigInteger(byteTmp);
-            
-        } catch(NumberFormatException ex) {
-            System.err.println("Plain text must not be empty");
-        }
-        return bPlainText;
-    }
-    
-    static public String bigInteger2Str(BigInteger cipherText)
-    {
-        byte [] plainBytes = cipherText.toByteArray();
-        String plainText  = new String(plainBytes);
-        return plainText;
     }
 
     static public BigInteger genPrime(AKS tb, int size)
@@ -174,11 +134,11 @@ public class RSA {
     }
 
     public BigInteger encrypt(BigInteger plaintext) {
-        return bigModPow(plaintext, e, n);
+        return Utils.bigModPow(plaintext, e, n);
     }
 
     public BigInteger decrypt(BigInteger ciphertext) {
-        return bigModPow(ciphertext, d, n);
+        return Utils.bigModPow(ciphertext, d, n);
     }
 
 
