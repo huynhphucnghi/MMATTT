@@ -40,4 +40,62 @@ public class Utils {
         }
         return res;
     }
+
+    /**
+     *
+     * @param a
+     * @param m
+     * @return
+     */
+    static public BigInteger bigPow(BigInteger a, int m) 
+    { 
+        BigInteger res = BigInteger.ONE;
+        while(m > 0){
+            // If m is odd: res *= a
+            if ((m & 1) == 1)
+                res = res.multiply(a);
+            // m /= 2
+            m = m >> 1;
+            a = a.multiply(a);
+        }
+        return res;
+    }
+
+    /**
+     * Calculate the greatest common divisor from 2 number a & b
+     * @param a A non negative number
+     * @param b A non negative number
+     * @return greatest common divisor of a & b
+     */
+    static public BigInteger bigGCD(BigInteger a, BigInteger b) {
+        if (b.equals(BigInteger.ZERO)) return a;
+        return bigGCD(b, a.mod(b));
+    }
+
+    /**
+     *
+     * @param a
+     * @param m
+     * @return
+     */
+    static public BigInteger bigModInverse(BigInteger a, BigInteger m) 
+    { 
+        // extend Euclid
+        BigInteger m0 = m;
+        BigInteger y = BigInteger.ZERO;
+        BigInteger x = BigInteger.ONE;
+        if (m.equals(BigInteger.ONE)) return BigInteger.ZERO;
+        while (a.compareTo(BigInteger.ONE) == 1) {
+            BigInteger q = a.divide(m);
+            BigInteger t = m;
+            m = a.mod(m);
+            a = t;
+            t = y;
+            y = x.subtract(q.multiply(y));
+            x = t;
+        }
+        if (x.compareTo(BigInteger.ZERO) == -1)
+            x = x.add(m0);
+        return x;
+    }
 }

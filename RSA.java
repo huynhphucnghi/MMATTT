@@ -15,44 +15,6 @@ public class RSA {
     }
 
     /**
-     * Calculate the greatest common divisor from 2 number a & b
-     * @param a A non negative number
-     * @param b A non negative number
-     * @return greatest common divisor of a & b
-     */
-    static private BigInteger bigGCD(BigInteger a, BigInteger b) {
-        if (b.equals(BigInteger.ZERO)) return a;
-        return bigGCD(b, a.mod(b));
-    }
-
-    /**
-     *
-     * @param a
-     * @param m
-     * @return
-     */
-    static private BigInteger bigModInverse(BigInteger a, BigInteger m) 
-    { 
-        // extend Euclid
-        BigInteger m0 = m;
-        BigInteger y = BigInteger.ZERO;
-        BigInteger x = BigInteger.ONE;
-        if (m.equals(BigInteger.ONE)) return BigInteger.ZERO;
-        while (a.compareTo(BigInteger.ONE) == 1) {
-            BigInteger q = a.divide(m);
-            BigInteger t = m;
-            m = a.mod(m);
-            a = t;
-            t = y;
-            y = x.subtract(q.multiply(y));
-            x = t;
-        }
-        if (x.compareTo(BigInteger.ZERO) == -1)
-            x = x.add(m0);
-        return x;
-    }
-
-    /**
      * Calculate ø(p*q)
      * @param p The first prime number
      * @param q The second prime number
@@ -73,7 +35,7 @@ public class RSA {
      */
     static public BigInteger bPrivateKey(BigInteger e, BigInteger p, BigInteger q)
     {
-        return bigModInverse(e, RSA.bPhi(p, q));
+        return Utils.bigModInverse(e, RSA.bPhi(p, q));
     }
 
     static public BigInteger genPrime(AKS tb, int size)
@@ -112,7 +74,7 @@ public class RSA {
         do {
             e = new BigInteger(2 * SIZE, new Random());
         } while ((e.compareTo(PhiN) != 1)
-                || (bigGCD(e,PhiN).compareTo(BigInteger.ONE) != 0));
+                || (Utils.bigGCD(e,PhiN).compareTo(BigInteger.ONE) != 0));
         d = RSA.bPrivateKey(e, p, q);
     }
 
