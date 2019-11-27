@@ -103,55 +103,53 @@ public class RSA {
         if (plaintext.compareTo(n) == -1) {
             return Utils.bigModPow(plaintext, e, n);
         }
-        int n_len = n.bitLength();
-        int block_byte_len = (n_len - 1) / 8;
-        int block_num = (plaintext.bitLength() - 1) / (block_byte_len * 8) + 1;
+        int blockByteLen = (n.bitLength() - 1) / 8;
+        int blockNum = (plaintext.bitLength() - 1) / (blockByteLen * 8) + 1;
         List<BigInteger> resList = new ArrayList<>();
         byte[] bytesPlaintext = plaintext.toByteArray();
         // Split and encrypt each block
-        for (int i = 0; i < block_num; i++) {
-            int startByte = bytesPlaintext.length - (i + 1) * block_byte_len;
-            int endByte = startByte + block_byte_len;
-            if (startByte < 0) {
-                startByte = 0;
-            }
+        for (int i = 0; i < blockNum; i++) {
+            int startByte = bytesPlaintext.length - (i + 1) * blockByteLen;
+            int endByte = startByte + blockByteLen;
+            startByte = Math.max(startByte, 0);
             BigInteger block = BigInteger.valueOf(bytesPlaintext[startByte]);
             for (int j = startByte + 1; j < endByte; j++) {
-                block = block.shiftLeft(8);
-                block = block.add(BigInteger.valueOf(bytesPlaintext[j]));
+                block = block.shiftLeft(8).add(BigInteger.valueOf(bytesPlaintext[j]));
             }
             resList.add(0, Utils.bigModPow(block, e, n));
         }
         // Concatenate all
-        return Utils.concatBigInteger(resList, block_byte_len + 1);
+        int eBlockByteLen = blockByteLen + 1; // encrypted blocks may have a bigger size than unencrypted blocks, thus we allocate one more byte for them
+        return Utils.concatBigInteger(resList, eBlockByteLen);
     }
 
+    /**
+     * Decrypt cipherText using private key.
+     * If cipherText is larger than or equal to n then split it into blocks of multiple bytes that are less than n
+     * Each block will be decrypted separately and then concatenated to return the final result
+     */
     public BigInteger decrypt(BigInteger cipherText) {
         if (cipherText.compareTo(n) == -1) {
             return Utils.bigModPow(cipherText, d, n);
         }
-        int n_len = n.bitLength();
-        int encrypted_block_byte_len = (n_len - 1) / 8 + 1;
-        System.out.println(encrypted_block_byte_len);
-        int encrypted_block_num = (cipherText.bitLength() - 1) / (encrypted_block_byte_len * 8) + 1;
+        int eBlockByteLen = (n.bitLength() - 1) / 8 + 1;
+        int eBlockNum = (cipherText.bitLength() - 1) / (eBlockByteLen * 8) + 1;
         List<BigInteger> resList = new ArrayList<>();
         byte[] bytesCipherText = cipherText.toByteArray();
         // Split and decrypt each encrypted block
-        for (int i = 0; i < encrypted_block_num; i++) {
-            int startByte = bytesCipherText.length - (i + 1) * encrypted_block_byte_len;
-            int endByte = startByte + encrypted_block_byte_len;
-            if (startByte < 0) {
-                startByte = 0;
-            }
-            BigInteger encrypted_block = BigInteger.valueOf(bytesCipherText[startByte] & 0xFF);
+        for (int i = 0; i < eBlockNum; i++) {
+            int startByte = bytesCipherText.length - (i + 1) * eBlockByteLen;
+            int endByte = startByte + eBlockByteLen;
+            startByte = Math.max(startByte, 0);
+            BigInteger eBlock = BigInteger.valueOf(bytesCipherText[startByte] & 0xFF);
             for (int j = startByte + 1; j < endByte; j++) {
-                encrypted_block = encrypted_block.shiftLeft(8);
-                encrypted_block = encrypted_block.add(BigInteger.valueOf(bytesCipherText[j] & 0xFF));
+                eBlock = eBlock.shiftLeft(8).add(BigInteger.valueOf(bytesCipherText[j] & 0xFF));
             }
-            resList.add(0, Utils.bigModPow(encrypted_block, d, n));
+            resList.add(0, Utils.bigModPow(eBlock, d, n));
         }
         // Concatenate all
-        return Utils.concatBigInteger(resList, encrypted_block_byte_len - 1);
+        int blockByteLen = eBlockByteLen - 1; // decrypted block has 1 byte less than encrypted block, see the encrypt function
+        return Utils.concatBigInteger(resList, blockByteLen);
     }
 
 
@@ -163,15 +161,14 @@ public class RSA {
 
         BigInteger bplaintext, bciphertext;
         bplaintext = Utils.str2BigInteger(plaintext);
-        System.out.println("Plaintext : " + bplaintext.toString(2));
+        System.out.println("Plaintext : " + bplaintext.toString());
 
         // Encrypt
         bciphertext = app.encrypt(bplaintext);
-        System.out.println("Ciphertext : " + bciphertext.toString(2));
+        System.out.println("Ciphertext : " + bciphertext.toString());
 
         // Decrypt
         bplaintext = app.decrypt(bciphertext);
-        System.out.println("After Decryption Plaintext : " + bplaintext.toString());
         System.out.println("After Decryption Plaintext : " + Utils.bigInteger2Str(bplaintext));
     }
 }
