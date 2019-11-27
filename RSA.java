@@ -1,4 +1,3 @@
-import javax.lang.model.type.NullType;
 import java.util.*;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -10,7 +9,8 @@ public class RSA {
     private BigInteger e, d;
     private int SIZE;
 
-    public RSA() {
+    public RSA()
+    {
         initialize();
     }
 
@@ -44,9 +44,8 @@ public class RSA {
         BigInteger p = new BigInteger(size, new Random()).setBit(size-1);
         BigInteger m = p.divide(six);
         p = m.multiply(six).subtract(BigInteger.ONE);
-        while (true)
-        {
-            if (tb.checkIsPrime(p)){
+        while (true) {
+            if (tb.checkIsPrime(p)) {
                 break;
             }
 
@@ -79,7 +78,8 @@ public class RSA {
     }
 
     // TODO: reconstruct follow above function
-    public void initialize() {
+    public void initialize()
+    {
         SIZE = 64;
         AKS tb = new AKS();
 
@@ -100,7 +100,8 @@ public class RSA {
      * If plaintext is larger than or equal to n then split it into blocks of multiple bytes that are less than n
      * Each block will be encrypted separately and then concatenated to return the final result
      */
-    public BigInteger encrypt(BigInteger plaintext) {
+    public BigInteger encrypt(BigInteger plaintext)
+    {
         if (plaintext.compareTo(n) == -1) {
             return Utils.bigModPow(plaintext, e, n);
         }
@@ -125,7 +126,8 @@ public class RSA {
      * If cipherText is larger than or equal to n then split it into blocks of multiple bytes that are less than n
      * Each block will be decrypted separately and then concatenated to return the final result
      */
-    public BigInteger decrypt(BigInteger cipherText) {
+    public BigInteger decrypt(BigInteger cipherText)
+    {
         if (cipherText.compareTo(n) == -1) {
             return Utils.bigModPow(cipherText, d, n);
         }
@@ -146,7 +148,8 @@ public class RSA {
     }
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException
+    {
         RSA app = new RSA();
         System.out.println("Enter any character : ");
         Scanner scanner = new Scanner(System.in);

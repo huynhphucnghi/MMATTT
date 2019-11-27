@@ -1,10 +1,8 @@
-import javax.lang.model.type.NullType;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public class Utils {
     /**
@@ -78,7 +76,8 @@ public class Utils {
      * @param b A non negative number
      * @return greatest common divisor of a & b
      */
-    static public BigInteger bigGCD(BigInteger a, BigInteger b) {
+    static public BigInteger bigGCD(BigInteger a, BigInteger b)
+    {
         if (b.equals(BigInteger.ZERO)) return a;
         return bigGCD(b, a.mod(b));
     }
@@ -116,7 +115,8 @@ public class Utils {
      * @param len The number of bytes of a single block
      * @return The concatenated BigInteger
      */
-    static public BigInteger concatBigInteger(List<BigInteger> l, int len) {
+    static public BigInteger concatBigInteger(List<BigInteger> l, int len)
+    {
         List<BigInteger> l_copy = new ArrayList<>(l);
         BigInteger res = l_copy.remove(0);
         while (!l_copy.isEmpty()) {
@@ -133,7 +133,8 @@ public class Utils {
      * @param blockByteLen The number of bytes per block
      * @param callback The function called for each block
      */
-    static public void traverseByteByBlock(byte[] b, int blockByteLen, Consumer<byte[]> callback) {
+    static public void traverseByteByBlock(byte[] b, int blockByteLen, Consumer<byte[]> callback)
+    {
         for (int i = 0; i < (b.length - 1) / blockByteLen + 1; i++) {
             int endByte = b.length - i * blockByteLen;
             int startByte = Math.max(endByte - blockByteLen, 0);
