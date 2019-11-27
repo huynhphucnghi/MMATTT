@@ -5,7 +5,6 @@ import java.math.BigInteger;
 public class RSA {
     private BigInteger p, q;
     private BigInteger n;
-    private BigInteger PhiN;
     private BigInteger e, d;
     private int SIZE;
 
@@ -22,8 +21,7 @@ public class RSA {
      */
     static public BigInteger bPhi(BigInteger p, BigInteger q)
     {
-        BigInteger PhiN = p.subtract(BigInteger.ONE);
-        return PhiN.multiply(q.subtract(BigInteger.ONE));
+        return p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
     }
 
     /**
@@ -69,7 +67,7 @@ public class RSA {
     public void genKeyPair(BigInteger p, BigInteger q)
     {
         n = p.multiply(q);
-        PhiN = RSA.bPhi(p, q);
+        BigInteger PhiN = RSA.bPhi(p, q);
         do {
             e = new BigInteger(2 * SIZE, new Random());
         } while ((e.compareTo(PhiN) != 1)
@@ -80,7 +78,9 @@ public class RSA {
     // TODO: reconstruct follow above function
     public void initialize()
     {
-        SIZE = 64;
+        System.out.println("Enter number of bits of the prime numbers: ");
+        Scanner scanner = new Scanner(System.in);
+        SIZE = scanner.nextInt();
         AKS tb = new AKS();
 
         /* Step 1: Select two large prime numbers. Say p and q. */
