@@ -1,4 +1,7 @@
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Utils {
     /**
@@ -102,5 +105,21 @@ public class Utils {
         if (x.compareTo(BigInteger.ZERO) == -1)
             x = x.add(m0);
         return x;
+    }
+
+    /**
+     * Concatenate block by block from a list of BigInteger into a single BigInteger. Each block has a specified length
+     * @param l The list of BigInteger, should have at least one element
+     * @param len The number of bytes of a single block
+     * @return The concatenated BigInteger
+     */
+    static public  BigInteger concatBigInteger(List<BigInteger> l, int len) {
+        List<BigInteger> l_copy = new ArrayList<>(l);
+        BigInteger res = l_copy.remove(0);
+        while (!l_copy.isEmpty()) {
+            res = res.shiftLeft(len * 8);
+            res = res.add(l_copy.remove(0));
+        }
+        return res;
     }
 }

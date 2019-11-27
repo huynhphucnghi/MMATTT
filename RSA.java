@@ -1,7 +1,6 @@
-import java.util.Scanner;
+import java.util.*;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.Random;
 
 public class RSA {
     private BigInteger p, q;
@@ -78,11 +77,11 @@ public class RSA {
         d = RSA.bPrivateKey(e, p, q);
     }
 
-    // TODO: reconstruct follow above function 
+    // TODO: reconstruct follow above function
     public void initialize() {
         SIZE = 64;
         AKS tb = new AKS();
-        
+
         /* Step 1: Select two large prime numbers. Say p and q. */
         long startTime = System.currentTimeMillis();
         p = genPrime(tb, SIZE);
@@ -95,12 +94,64 @@ public class RSA {
         this.genKeyPair(p, q);
     }
 
+    /**
+     * Encrypt plaintext using public key.
+     * If plaintext is larger than or equal to n then split it into blocks of multiple bytes that are less than n
+     * Each block will be encrypted separately and then concatenated to return the final result
+     */
     public BigInteger encrypt(BigInteger plaintext) {
-        return Utils.bigModPow(plaintext, e, n);
+        if (plaintext.compareTo(n) == -1) {
+            return Utils.bigModPow(plaintext, e, n);
+        }
+        int n_len = n.bitLength();
+        int block_byte_len = (n_len - 1) / 8;
+        int block_num = (plaintext.bitLength() - 1) / (block_byte_len * 8) + 1;
+        List<BigInteger> resList = new ArrayList<>();
+        byte[] bytesPlaintext = plaintext.toByteArray();
+        // Split and encrypt each block
+        for (int i = 0; i < block_num; i++) {
+            int startByte = bytesPlaintext.length - (i + 1) * block_byte_len;
+            int endByte = startByte + block_byte_len;
+            if (startByte < 0) {
+                startByte = 0;
+            }
+            BigInteger block = BigInteger.valueOf(bytesPlaintext[startByte]);
+            for (int j = startByte + 1; j < endByte; j++) {
+                block = block.shiftLeft(8);
+                block = block.add(BigInteger.valueOf(bytesPlaintext[j]));
+            }
+            resList.add(0, Utils.bigModPow(block, e, n));
+        }
+        // Concatenate all
+        return Utils.concatBigInteger(resList, block_byte_len + 1);
     }
 
-    public BigInteger decrypt(BigInteger ciphertext) {
-        return Utils.bigModPow(ciphertext, d, n);
+    public BigInteger decrypt(BigInteger cipherText) {
+        if (cipherText.compareTo(n) == -1) {
+            return Utils.bigModPow(cipherText, d, n);
+        }
+        int n_len = n.bitLength();
+        int encrypted_block_byte_len = (n_len - 1) / 8 + 1;
+        System.out.println(encrypted_block_byte_len);
+        int encrypted_block_num = (cipherText.bitLength() - 1) / (encrypted_block_byte_len * 8) + 1;
+        List<BigInteger> resList = new ArrayList<>();
+        byte[] bytesCipherText = cipherText.toByteArray();
+        // Split and decrypt each encrypted block
+        for (int i = 0; i < encrypted_block_num; i++) {
+            int startByte = bytesCipherText.length - (i + 1) * encrypted_block_byte_len;
+            int endByte = startByte + encrypted_block_byte_len;
+            if (startByte < 0) {
+                startByte = 0;
+            }
+            BigInteger encrypted_block = BigInteger.valueOf(bytesCipherText[startByte] & 0xFF);
+            for (int j = startByte + 1; j < endByte; j++) {
+                encrypted_block = encrypted_block.shiftLeft(8);
+                encrypted_block = encrypted_block.add(BigInteger.valueOf(bytesCipherText[j] & 0xFF));
+            }
+            resList.add(0, Utils.bigModPow(encrypted_block, d, n));
+        }
+        // Concatenate all
+        return Utils.concatBigInteger(resList, encrypted_block_byte_len - 1);
     }
 
 
@@ -108,14 +159,19 @@ public class RSA {
         RSA app = new RSA();
         System.out.println("Enter any character : ");
         Scanner scanner = new Scanner(System.in);
-        long plaintext = scanner.nextLong();
+        String plaintext = scanner.nextLine();
+
         BigInteger bplaintext, bciphertext;
-        bplaintext = BigInteger.valueOf((long) plaintext);
+        bplaintext = Utils.str2BigInteger(plaintext);
+        System.out.println("Plaintext : " + bplaintext.toString(2));
+
+        // Encrypt
         bciphertext = app.encrypt(bplaintext);
-        System.out.println("Plaintext : " + bplaintext.toString());
-        System.out.println("Ciphertext : " + bciphertext.toString());
+        System.out.println("Ciphertext : " + bciphertext.toString(2));
+
+        // Decrypt
         bplaintext = app.decrypt(bciphertext);
-        System.out.println("After Decryption Plaintext : "
-                + bplaintext.toString());
+        System.out.println("After Decryption Plaintext : " + bplaintext.toString());
+        System.out.println("After Decryption Plaintext : " + Utils.bigInteger2Str(bplaintext));
     }
 }
