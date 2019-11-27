@@ -1,3 +1,4 @@
+import javax.lang.model.type.NullType;
 import java.util.*;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -104,20 +105,16 @@ public class RSA {
             return Utils.bigModPow(plaintext, e, n);
         }
         int blockByteLen = (n.bitLength() - 1) / 8;
-        int blockNum = (plaintext.bitLength() - 1) / (blockByteLen * 8) + 1;
         List<BigInteger> resList = new ArrayList<>();
         byte[] bytesPlaintext = plaintext.toByteArray();
         // Split and encrypt each block
-        for (int i = 0; i < blockNum; i++) {
-            int startByte = bytesPlaintext.length - (i + 1) * blockByteLen;
-            int endByte = startByte + blockByteLen;
-            startByte = Math.max(startByte, 0);
-            BigInteger block = BigInteger.valueOf(bytesPlaintext[startByte]);
-            for (int j = startByte + 1; j < endByte; j++) {
-                block = block.shiftLeft(8).add(BigInteger.valueOf(bytesPlaintext[j]));
+        Utils.traverseByteByBlock(bytesPlaintext, blockByteLen, (byte[] b) -> {
+            BigInteger block = BigInteger.valueOf(b[0]);
+            for (int j = 1; j < b.length; j++) {
+                block = block.shiftLeft(8).add(BigInteger.valueOf(b[j]));
             }
             resList.add(0, Utils.bigModPow(block, e, n));
-        }
+        });
         // Concatenate all
         int eBlockByteLen = blockByteLen + 1; // encrypted blocks may have a bigger size than unencrypted blocks, thus we allocate one more byte for them
         return Utils.concatBigInteger(resList, eBlockByteLen);
@@ -133,20 +130,16 @@ public class RSA {
             return Utils.bigModPow(cipherText, d, n);
         }
         int eBlockByteLen = (n.bitLength() - 1) / 8 + 1;
-        int eBlockNum = (cipherText.bitLength() - 1) / (eBlockByteLen * 8) + 1;
         List<BigInteger> resList = new ArrayList<>();
         byte[] bytesCipherText = cipherText.toByteArray();
         // Split and decrypt each encrypted block
-        for (int i = 0; i < eBlockNum; i++) {
-            int startByte = bytesCipherText.length - (i + 1) * eBlockByteLen;
-            int endByte = startByte + eBlockByteLen;
-            startByte = Math.max(startByte, 0);
-            BigInteger eBlock = BigInteger.valueOf(bytesCipherText[startByte] & 0xFF);
-            for (int j = startByte + 1; j < endByte; j++) {
-                eBlock = eBlock.shiftLeft(8).add(BigInteger.valueOf(bytesCipherText[j] & 0xFF));
+        Utils.traverseByteByBlock(bytesCipherText, eBlockByteLen, (byte[] b) -> {
+            BigInteger eBlock = BigInteger.valueOf(b[0] & 0xFF);
+            for (int j = 1; j < b.length; j++) {
+                eBlock = eBlock.shiftLeft(8).add(BigInteger.valueOf(b[j] & 0xFF));
             }
             resList.add(0, Utils.bigModPow(eBlock, d, n));
-        }
+        });
         // Concatenate all
         int blockByteLen = eBlockByteLen - 1; // decrypted block has 1 byte less than encrypted block, see the encrypt function
         return Utils.concatBigInteger(resList, blockByteLen);

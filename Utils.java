@@ -1,6 +1,10 @@
+import javax.lang.model.type.NullType;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class Utils {
     /**
@@ -112,7 +116,7 @@ public class Utils {
      * @param len The number of bytes of a single block
      * @return The concatenated BigInteger
      */
-    static public  BigInteger concatBigInteger(List<BigInteger> l, int len) {
+    static public BigInteger concatBigInteger(List<BigInteger> l, int len) {
         List<BigInteger> l_copy = new ArrayList<>(l);
         BigInteger res = l_copy.remove(0);
         while (!l_copy.isEmpty()) {
@@ -120,5 +124,20 @@ public class Utils {
             res = res.add(l_copy.remove(0));
         }
         return res;
+    }
+
+    /**
+     * Traverse an array of bytes by block. A block contains multiple bytes
+     * Traverse from right to left with big endian style
+     * @param b The array of bytes to traverse
+     * @param blockByteLen The number of bytes per block
+     * @param callback The function called for each block
+     */
+    static public void traverseByteByBlock(byte[] b, int blockByteLen, Consumer<byte[]> callback) {
+        for (int i = 0; i < (b.length - 1) / blockByteLen + 1; i++) {
+            int endByte = b.length - i * blockByteLen;
+            int startByte = Math.max(endByte - blockByteLen, 0);
+            callback.accept(Arrays.copyOfRange(b, startByte, endByte));
+        }
     }
 }
