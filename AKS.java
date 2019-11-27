@@ -65,7 +65,7 @@ public class AKS
                 lowR.compareTo(n) < 0; 
                 lowR = lowR.add(BigInteger.ONE))
         {
-            if( (lowR.gcd(n)).compareTo(BigInteger.ONE) != 0 )
+            if( (Utils.bigGCD(lowR,n)).compareTo(BigInteger.ONE) != 0 )
             {
                 return false;
             }
@@ -151,13 +151,13 @@ public class AKS
         high = new BigInteger("10");
         len = (bNum.toString().length()) / val;
         l = (int) Math.ceil(len);
-        low = low.pow(l - 1);
-        high = high.pow(l).subtract(BigInteger.ONE);
+        low = Utils.bigPow(low, l-1);
+        high = Utils.bigPow(high, l).subtract(BigInteger.ONE);
         while(low.compareTo(high) <= 0)
         {
             mid = low.add(high);
             mid = mid.divide(new BigInteger("2"));
-            res = mid.pow(val);
+            res = Utils.bigPow(mid, val);
             if(res.compareTo(bNum) < 0)
             {
                 low = mid.add(BigInteger.ONE);
